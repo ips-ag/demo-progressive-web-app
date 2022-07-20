@@ -1,7 +1,7 @@
 [
     {
         "id":1,
-        "title": "video chat",
+        "title": "Video meeting",
         "itemText": "Start a video internal chat",
         "itemButtonText": "Start Video chat",
         "itemImage": "https://plchldr.co/i/420x160",
@@ -9,16 +9,16 @@
     },
     {
         "id":2,
-        "title": "Maps &amp;Localization",
-        "itemText": "Start maps",
-        "itemButtonText": "Find",
+        "title": "Maps & Localization services",
+        "itemText": "Start Maps & Localization services",
+        "itemButtonText": "Find Locations",
         "itemImage": "https://plchldr.co/i/420x160",
         "buttonUrl":"/Maps"
     },
     {
         "id":3,
         "title": "Users",
-        "itemText": "View users",
+        "itemText": "View and Edit a registered user",
         "itemButtonText": "Browse users",
         "itemImage": "https://plchldr.co/i/420x160",
         "buttonUrl":"/UserList"
