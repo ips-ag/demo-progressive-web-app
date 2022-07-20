@@ -1,6 +1,9 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
 
+import AppHeader from '../components/partials/AppHeader';
+import AppFooter from '../components/partials/AppFooter';
+
 import './App.scss';
 
 
@@ -8,11 +11,12 @@ function App() {
 
   return (
     <>
-     PWA home page
+      <AppHeader />
+
+      <AppFooter />
     </>
   );
   
 }
 
 export default hot(module)(App);
-
