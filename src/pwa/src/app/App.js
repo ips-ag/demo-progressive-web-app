@@ -7,6 +7,7 @@ import AppFooter from '../components/partials/AppFooter';
 import Home from '../views/Home';
 import Profile from '../views/Profile';
 import Settings from '../views/Settings';
+import UserList from '../views/UserList';
 import './App.scss';
 
 
@@ -20,6 +21,7 @@ function App() {
           <Col>
             <Routes>
               <Route exact path="/" element={<Home />} />
+              <Route exact path="/UserList" element={<UserList />} />
               <Route exact path="/Profile" element={<Profile />} />
               <Route exact path="/Settings" element={<Settings />} />
             </Routes>
