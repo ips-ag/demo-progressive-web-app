@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { hot } from 'react-hot-loader';
 import { Route, Routes } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
@@ -12,6 +12,10 @@ import './App.scss';
 
 
 function App() {
+
+  useEffect(() => {
+    console.log('Do you want to install?')
+  }, []);
 
   return (
     <>
@@ -31,7 +35,7 @@ function App() {
       <AppFooter />
     </>
   );
-  
+
 }
 
 export default hot(module)(App);

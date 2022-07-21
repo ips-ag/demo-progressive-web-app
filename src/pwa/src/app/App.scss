@@ -29,6 +29,24 @@
   width: 100%;
 }
 
+.user-menu{
+  @media(max-width:990px){
+    display:none;
+  }
+  align-items: center;
+}
+.mobile-avatar{
+  @media(min-width:990px){
+    display:none;
+  }
+  justify-content: flex-end;
+    margin-right: 1em;
+    display: flex;
+    flex: 1;
+    .nav-link{
+      padding-top:5px;
+    }
+}
 
 .cards-section {
   @media(max-width:768px) {
