@@ -1,0 +1,128 @@
+@import '~rsuite/dist/rsuite.min.css';
+@import "~bootstrap/scss/bootstrap";
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
+@import '../styles/variables.scss';
+
+.app-header {
+  grid-area: ah;
+}
+
+.app-container {
+  grid-area: ac;
+}
+
+.app-footer {
+  grid-area: af;
+}
+
+.app-sidebar {
+  grid-area: as;
+}
+
+.layout-grid {
+  @media(min-width:500px) {
+    grid-template-columns: 0 auto;
+    grid-template-areas:
+      "ah ah"
+      "as ac"
+      "af af";
+  }
+
+  overflow-x:hidden;
+  display: grid;
+  grid-template-areas: "ah"
+  "as"
+  "ac"
+  "af";
+}
+
+.app-sidebar {
+  @media(max-width:500px) {
+    display: none!important;
+  }
+  padding: 0;
+}
+
+.content-area {
+  padding: 10px 20px;
+
+}
+
+.app-container {
+  @media(max-width:768px) {
+    padding: 30px 20px;
+  }
+
+  background: $app-background;
+}
+
+.app-footer {
+  min-height: 50px;
+  background: $footer-background;
+  padding: 10px;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.user-menu {
+  @media(max-width:990px) {
+    display: none;
+  }
+
+  align-items: center;
+}
+
+.mobile-avatar {
+  @media(min-width:990px) {
+    display: none;
+  }
+
+  justify-content: flex-end;
+  margin-right: 1em;
+  display: flex;
+  flex: 1;
+
+  .nav-link {
+    padding-top: 5px;
+  }
+}
+
+.page-heading{
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+
+}
+.page-title{
+ margin-bottom: 20px;
+ margin-right: 2rem;
+}
+
+.cards-section {
+  display: block;
+  padding: 30px 0 100px 0;
+}
+
+.card {
+  margin-bottom: 0;
+
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.rs-panel {
+  background-color: white
+}
+
+.video-frame {
+  width: 100%;
+  height: 80vh;
+
+}
