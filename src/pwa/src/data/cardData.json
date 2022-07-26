@@ -4,7 +4,7 @@
         "title": "Video meeting",
         "itemText": "Start a video internal chat",
         "itemButtonText": "Start Video chat",
-        "itemImage": "https://plchldr.co/i/420x160",
+        "itemImage": "https://plchldr.co/i/320x210",
         "buttonUrl":"/Video"
     },
     {
@@ -12,7 +12,7 @@
         "title": "Maps & Localization services",
         "itemText": "Start Maps & Localization services",
         "itemButtonText": "Find Locations",
-        "itemImage": "https://plchldr.co/i/420x160",
+        "itemImage": "https://plchldr.co/i/320x210",
         "buttonUrl":"/Maps"
     },
     {
@@ -20,7 +20,31 @@
         "title": "Users",
         "itemText": "View and Edit a registered user",
         "itemButtonText": "Browse users",
-        "itemImage": "https://plchldr.co/i/420x160",
+        "itemImage": "https://plchldr.co/i/320x210",
+        "buttonUrl":"/UserList"
+    },
+    {
+        "id":4,
+        "title": "Video meeting",
+        "itemText": "Start a video internal chat",
+        "itemButtonText": "Start Video chat",
+        "itemImage": "https://plchldr.co/i/320x210",
+        "buttonUrl":"/Video"
+    },
+    {
+        "id":5,
+        "title": "Maps & Localization services",
+        "itemText": "Start Maps & Localization services",
+        "itemButtonText": "Find Locations",
+        "itemImage": "https://plchldr.co/i/320x210",
+        "buttonUrl":"/Maps"
+    },
+    {
+        "id":6,
+        "title": "Users",
+        "itemText": "View and Edit a registered user",
+        "itemButtonText": "Browse users",
+        "itemImage": "https://plchldr.co/i/320x210",
         "buttonUrl":"/UserList"
     }
 ]

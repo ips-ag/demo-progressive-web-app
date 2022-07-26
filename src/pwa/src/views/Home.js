@@ -3,34 +3,33 @@ import CardData from "../data/cardData.json";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import Button from 'react-bootstrap/Button';
-
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 
 function Home() {
 
   return (
     <div>
-      <h4>Home</h4>
+      <div className="page-heading">
+        <h4 className="page-title">Home</h4>
+        <Breadcrumb>
+          <Breadcrumb.Item href="#">Home</Breadcrumb.Item>
+        </Breadcrumb></div>
+      <Card>
+        <Card.Body>
+          <Card.Title>IPS demo Progressive Web App</Card.Title>
+          <Card.Link href="#">Read more</Card.Link>
+        </Card.Body>
+      </Card>
       <div className="cards-section">
-        {CardData.map((card,i) => {
-          return (
-            <CardGroup key={i}>
-              <Card >
-                <Card.Img variant="top" src={card.itemImage} />
-                <Card.Body>
-                  <Card.Title>{card.title}</Card.Title>
-                  <Card.Text>
-                    {card.itemText}
-                  </Card.Text>
-                  <Button variant="outline-primary" color="secondary" href={card.buttonUrl} >{card.itemButtonText}</Button>
-                </Card.Body>
-              </Card>
-            </CardGroup>
-          )
-        })}
-
+        <Row xs={1} md={2} className="g-4">
+          <Col>
+            <p>Welcome to IPS demo Progressive Web App</p>
+          </Col>
+        </Row>
       </div>
     </div>
-
   )
 }
 export default Home;
