@@ -18,28 +18,15 @@ function Home() {
         </Breadcrumb></div>
       <Card>
         <Card.Body>
-          <Card.Title>Area</Card.Title>
-          <Card.Link href="#">Another Link</Card.Link>
+          <Card.Title>IPS demo Progressive Web App</Card.Title>
+          <Card.Link href="#">Read more</Card.Link>
         </Card.Body>
       </Card>
       <div className="cards-section">
-        <Row xs={1} md={5} className="g-4">
-          {CardData.map((card, i) => {
-            return (
-              <Col>
-                <Card key={i}>
-                  <Card.Img variant="top" src={card.itemImage} />
-                  <Card.Body>
-                    <Card.Title>{card.title}</Card.Title>
-                    <Card.Text>
-                      {card.itemText}
-                    </Card.Text>
-                    <Button variant="outline-primary" color="secondary" href={card.buttonUrl} >{card.itemButtonText}</Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            )
-          })}
+        <Row xs={1} md={2} className="g-4">
+          <Col>
+            <p>Welcome to IPS demo Progressive Web App</p>
+          </Col>
         </Row>
       </div>
     </div>
