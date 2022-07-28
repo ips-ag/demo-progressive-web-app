@@ -1,0 +1,21 @@
+{
+    "name": "IPS-AG",
+    "short_name": "IPS",
+    "icons": [
+        {
+            "src": "/ips-logo_x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/ips-logo_x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#3264a8",
+    "background_color": "#FFFFFF",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait"
+}
