@@ -14,9 +14,10 @@ import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsAc
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import DrawerHeader from './DrawerHeader';
+import { Button } from '@mui/material';
 
 
-const drawerWidth = process.env.DRAWER_WIDTH;
+const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
@@ -54,7 +55,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-const SideBar=()=> {
+const SideBar = () => {
     const [open, setOpen] = React.useState(false);
 
     const handleDrawerClose = () => {
@@ -105,9 +106,9 @@ const SideBar=()=> {
             </List>
             <Divider />
             <DrawerHeader>
-                <IconButton onClick={handleDrawerClose}>
+                <Button color="inherit" onClick={handleDrawerClose}>
                     {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                </IconButton>
+                </Button>
             </DrawerHeader>
         </Drawer>
     );
