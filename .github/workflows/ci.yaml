@@ -11,7 +11,7 @@ name: Deploy web app to Azure Static Web Apps
 
 env:
   APP_LOCATION: "/src/pwa" # location of your client code
-  APP_ARTIFACT_LOCATION: "public" # location of client code build output
+  APP_OUTPUT_LOCATION: "public" # location of client code build output
 
 on:
   push:
@@ -36,13 +36,14 @@ jobs:
         with:
           submodules: true
       - name: Build And Deploy
-        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9
+        uses: Azure/static-web-apps-deploy
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: ${{ env.APP_LOCATION }}
-          app_artifact_location: ${{ env.APP_ARTIFACT_LOCATION }}
+          output_location: ${{ env.APP_OUTPUT_LOCATION }}
+          app_build_command: 'yarn build'
 
   close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -50,7 +51,7 @@ jobs:
     name: Close
     steps:
       - name: Close
-        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9
+        uses: Azure/static-web-apps-deploy
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "close"
