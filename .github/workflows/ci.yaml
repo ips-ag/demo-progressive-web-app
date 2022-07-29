@@ -11,7 +11,7 @@ name: Deploy web app to Azure Static Web Apps
 
 env:
   APP_LOCATION: "/src/pwa" # location of your client code
-  APP_OUTPUT_LOCATION: "public" # location of client code build output
+  APP_OUTPUT_LOCATION: "./out" # location of client code build output
 
 on:
   push:
