@@ -31,16 +31,14 @@ jobs:
   infrastructure:
     runs-on: ubuntu-latest
     name: Deploy Infrastructure
-    defaults:
-      run:
-        working-directory: ./infrastructure/azure
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: true          
+          submodules: true
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - run: cd ./infrastructure/azure
       - name: Deploy Infrastructure
         uses: azure/arm-deploy@v1
         id: deploy
