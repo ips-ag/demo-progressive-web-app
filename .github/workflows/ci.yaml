@@ -31,6 +31,9 @@ jobs:
   infrastructure:
     runs-on: ubuntu-latest
     name: Deploy Infrastructure
+    defaults:
+      run:
+        working-directory: ./infrastructure/azure
     steps:
       - uses: actions/checkout@v3
         with:
@@ -41,7 +44,6 @@ jobs:
       - name: Deploy Infrastructure
         uses: azure/arm-deploy@v1
         id: deploy
-        working-directory: ./infrastructure/azure
         with:
           scope: subscription
           subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
