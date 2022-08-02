@@ -28,6 +28,28 @@ permissions:
   pull-requests: write
 
 jobs:
+  infrastructure:
+    runs-on: ubuntu-latest
+    name: Deploy Infrastructure
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true          
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy Infrastructure
+        uses: azure/arm-deploy@v1
+        id: deploy
+        working-directory: ./infrastructure/azure
+        with:
+          scope: subscription
+          subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
+          region: westeurope
+          template: resourceGroup.bicep
+          parameters: 'parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }}'
+          failOnStdErr: false
+      - run: echo ${{ steps.deploy.outputs.deploymentToken }}
   build_and_deploy:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
