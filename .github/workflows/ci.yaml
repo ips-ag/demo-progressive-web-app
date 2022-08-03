@@ -56,6 +56,8 @@ jobs:
       always() &&
       !contains(needs.*.result, 'failure') &&
       !contains(needs.*.result, 'cancelled')
+    env:
+      shouldDeploy: ${{ github.event_name }} == 'push' || (${{ github.event_name }} == 'pull_request' && ${{ github.event.action }} != 'closed')
     outputs:
       deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
     steps:
@@ -74,7 +76,7 @@ jobs:
           region: westeurope
           deploymentName: dep-resourceGroup-${{ github.run_id }}
           template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }} deploymentId=${{ github.run_id }}'
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }} deploymentId=${{ github.run_id }} deploy=${{ env.shouldDeploy }}'
           failOnStdErr: false
 
   deploy:
