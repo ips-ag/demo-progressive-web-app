@@ -11,8 +11,7 @@ name: Deploy web app to Azure Static Web Apps
 
 env:
   SOURCE_LOCATION: "./src/pwa" # location of your client code
-  SHOULD_DEPLOY: ${{ github.event_name }} == 'push' || (${{ github.event_name }} == 'pull_request' && ${{ github.event.action }} != 'closed')
-  SHOULD_CLOSE: ${{ github.event_name }} == 'pull_request' && ${{ github.event.action }} == 'closed'
+
 on:
   push:
     branches:
@@ -29,7 +28,7 @@ permissions:
 
 jobs:
   build:
-    if: ${{ env.SHOULD_DEPLOY }}
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -74,7 +73,7 @@ jobs:
           failOnStdErr: false
 
   deploy:
-    if: ${{ env.SHOULD_DEPLOY }}
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Deploy Application
     needs: infrastructure
@@ -94,7 +93,7 @@ jobs:
           skip_api_build: true
 
   close:
-    if: ${{ env.SHOULD_CLOSE }}
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close
     needs: infrastructure
