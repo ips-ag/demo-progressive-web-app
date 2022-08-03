@@ -38,7 +38,9 @@ jobs:
         with:
           submodules: true
       - name: Build
-        run: 'yarn build'
+        run: |
+          yarn
+          yarn build
         working-directory: ${{ env.APP_LOCATION }}
       - name: Publish build artifact
         uses: actions/upload-artifact@v3
