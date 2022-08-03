@@ -11,6 +11,8 @@ name: Deploy web app to Azure Static Web Apps
 
 env:
   SOURCE_LOCATION: "./src/pwa" # location of your client code
+  DEPLOY: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') }}
+  CLOSE: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' }}
 
 on:
   push:
@@ -28,8 +30,7 @@ permissions:
 
 jobs:
   build:
-    # if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-    if: github.event.action == 'closed'
+    if: env.DEPLOY
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -56,13 +57,9 @@ jobs:
       always() &&
       !contains(needs.*.result, 'failure') &&
       !contains(needs.*.result, 'cancelled')
-    env:
-      shouldDeploy: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') }}
     outputs:
       deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
     steps:
-      - name: Display shouldDeploy
-        run: echo ${{ env.shouldDeploy }}
       - uses: actions/checkout@v3
         with:
           submodules: true
@@ -78,11 +75,11 @@ jobs:
           region: westeurope
           deploymentName: dep-resourceGroup-${{ github.run_id }}
           template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }} deploymentId=${{ github.run_id }} deploy=${{ env.shouldDeploy }}'
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }} deploymentId=${{ github.run_id }} deploy=${{ env.DEPLOY }}'
           failOnStdErr: false
 
   deploy:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: env.DEPLOY
     runs-on: ubuntu-latest
     name: Deploy Application
     needs: infrastructure
@@ -102,7 +99,7 @@ jobs:
           skip_api_build: true
 
   close:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: env.CLOSE
     runs-on: ubuntu-latest
     name: Close
     needs: infrastructure
