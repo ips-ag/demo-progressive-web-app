@@ -3,6 +3,7 @@ targetScope = 'subscription'
 param name string
 param location string
 param repositoryUrl string
+param deploymentId string = utcNow()
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: name
@@ -10,7 +11,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 module app 'staticWebApp.bicep' = {
-  name: 'dep-staticWebApp'
+  name: 'dep-staticWebApp-${deploymentId}'
   scope: rg
   params: {
     name: 'stapp-pwademo'
