@@ -67,8 +67,9 @@ jobs:
           scope: subscription
           subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
           region: westeurope
+          deploymentName: dep-resourceGroup-${{ github.run_id }}
           template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }}'
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }} deploymentId=${{ github.run_id }}'
           failOnStdErr: false
 
   deploy:
