@@ -1,12 +1,12 @@
 targetScope = 'resourceGroup'
 
 param name string
-param location string
+param location string = resourceGroup().location
 param repositoryUrl string = ''
 param branch string = 'main'
 param deploy bool = true
 
-resource swa_new 'Microsoft.Web/staticSites@2021-03-01' = if (deploy) {
+resource swa 'Microsoft.Web/staticSites@2021-03-01' = if (deploy) {
   name: name
   location: location
   sku: {
@@ -28,4 +28,4 @@ resource swa_existing 'Microsoft.Web/staticSites@2021-03-01' existing = if (depl
 }
 
 #disable-next-line outputs-should-not-contain-secrets
-output deploymentToken string = listSecrets(deploy ? swa_new.id : swa_existing.id, '2021-03-01').properties.apiKey
+output deploymentToken string = listSecrets(deploy ? swa.id : swa_existing.id, '2021-03-01').properties.apiKey

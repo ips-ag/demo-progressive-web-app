@@ -8,33 +8,29 @@ param deploy bool = true
 
 var webAppName = 'stapp-pwademo'
 
-resource rg_new 'Microsoft.Resources/resourceGroups@2021-04-01' = if (deploy) {
+resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = if (deploy) {
   name: name
   location: location
 }
 
-module app_new 'staticWebApp.bicep' = if (deploy) {
+module app 'staticWebApp.bicep' = if (deploy) {
   name: 'dep-staticWebApp-${deploymentId}'
-  scope: rg_new
+  scope: rg
   params: {
     name: webAppName
-    location: rg_new.location
+    location: rg.location
     repositoryUrl: repositoryUrl
   }
-}
-
-resource rg_existing 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!deploy) {
-  name: name
 }
 
 module app_existing 'staticWebApp.bicep' = if (!deploy) {
-  name: 'dep-staticWebApp-${deploymentId}'
-  scope: rg_existing
+  name: 'dep-staticWebApp-existing-${deploymentId}'
+  scope: resourceGroup(name)
+#disable-next-line explicit-values-for-loc-params
   params: {
     name: webAppName
-    location: rg_existing.location
     repositoryUrl: repositoryUrl
   }
 }
 
-output deploymentToken string = deploy ? app_new.outputs.deploymentToken : app_existing.outputs.deploymentToken
+output deploymentToken string = deploy ? app.outputs.deploymentToken : app_existing.outputs.deploymentToken
