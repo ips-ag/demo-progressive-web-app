@@ -12,7 +12,7 @@ name: Deploy web app to Azure Static Web Apps
 env:
   APP_LOCATION: "./src/pwa" # location of your client code
   APP_OUTPUT_DIRECTORY: 'out' # directory name of client code build output
-  APP_OUTPUT_LOCATION: "${{ env.APP_LOCATION }}/${{ env.APP_OUTPUT_DIRECTORY }}" # location of client code build output
+  APP_OUTPUT_LOCATION: "./src/pwa/out" # location of client code build output
 
 on:
   push:
