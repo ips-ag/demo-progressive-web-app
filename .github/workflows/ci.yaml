@@ -10,8 +10,9 @@
 name: Deploy web app to Azure Static Web Apps
 
 env:
-  APP_LOCATION: "/src/pwa" # location of your client code
-  APP_OUTPUT_LOCATION: "./out" # location of client code build output
+  APP_LOCATION: "./src/pwa" # location of your client code
+  APP_OUTPUT_DIRECTORY: 'out' # directory name of client code build output
+  APP_OUTPUT_LOCATION: "${{ env.APP_LOCATION }}/${{ env.APP_OUTPUT_DIRECTORY }}" # location of client code build output
 
 on:
   push:
@@ -28,9 +29,28 @@ permissions:
   pull-requests: write
 
 jobs:
+  build:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Build
+        run: 'yarn build'
+        working-directory: ${{ env.APP_LOCATION }}
+      - name: Publish build artifact
+        uses: actions/upload-artifact@v3
+          with:
+            name: pwa
+            path: ${{ env.APP_OUTPUT_LOCATION }}
+            if-no-files-found: error
+
   infrastructure:
     runs-on: ubuntu-latest
     name: Deploy Infrastructure
+    needs: build
     outputs:
       deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
     steps:
@@ -51,24 +71,25 @@ jobs:
           parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }}'
           failOnStdErr: false
 
-  build_and_deploy:
+  deploy:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy
+    name: Deploy Application
     needs: infrastructure
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         with:
-          submodules: true
-      - name: Build And Deploy
+          name: pwa
+          path: ${{ env.APP_OUTPUT_DIRECTORY }}
+      - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: ${{ env.APP_LOCATION }}
-          output_location: ${{ env.APP_OUTPUT_LOCATION }}
-          app_build_command: 'yarn build'
+          app_location: ${{ env.APP_OUTPUT_DIRECTORY }}
+          output_location: ''
+          skip_app_build: true
 
   close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
