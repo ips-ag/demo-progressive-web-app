@@ -10,8 +10,7 @@
 name: Deploy web app to Azure Static Web Apps
 
 env:
-  APP_LOCATION: "./src/pwa" # location of your client code
-  APP_OUTPUT_LOCATION: "./src/pwa/out" # location of client code build output
+  SOURCE_LOCATION: "./src/pwa" # location of your client code
 
 on:
   push:
@@ -40,12 +39,12 @@ jobs:
         run: |
           yarn
           yarn build
-        working-directory: ${{ env.APP_LOCATION }}
+        working-directory: ${{ env.SOURCE_LOCATION }}
       - name: Publish build artifact
         uses: actions/upload-artifact@v3
         with:
           name: pwa
-          path: ${{ env.APP_OUTPUT_LOCATION }}
+          path: ${{ env.SOURCE_LOCATION }}/out
           if-no-files-found: error
 
   infrastructure:
@@ -81,14 +80,13 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: pwa
-          path: ${{ env.APP_LOCATION }}
       - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: ${{ env.APP_LOCATION }}
+          app_location: './'
           output_location: ''
           skip_app_build: true
           skip_api_build: true
