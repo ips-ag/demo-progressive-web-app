@@ -51,6 +51,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Infrastructure
     needs: build
+    if: |
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+    env:
+      DEPLOY: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') }}
+      REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
     outputs:
       deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
     steps:
@@ -69,7 +76,7 @@ jobs:
           region: westeurope
           deploymentName: dep-resourceGroup-${{ github.run_id }}
           template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }} deploymentId=${{ github.run_id }}'
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=${{ env.DEPLOY }}'
           failOnStdErr: false
 
   deploy:
