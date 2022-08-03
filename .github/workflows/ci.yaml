@@ -28,7 +28,8 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    # if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    if: github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -51,6 +52,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Infrastructure
     needs: build
+    if: |
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled') &&
     outputs:
       deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
     steps:
