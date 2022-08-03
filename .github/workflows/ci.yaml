@@ -10,8 +10,7 @@
 name: Deploy web app to Azure Static Web Apps
 
 env:
-  APP_LOCATION: "/src/pwa" # location of your client code
-  APP_OUTPUT_LOCATION: "./out" # location of client code build output
+  SOURCE_LOCATION: "./src/pwa" # location of your client code
 
 on:
   push:
@@ -28,31 +27,79 @@ permissions:
   pull-requests: write
 
 jobs:
-  build_and_deploy:
+  build:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy
+    name: Build
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Build And Deploy
+      - name: Build
+        run: |
+          yarn
+          yarn build
+        working-directory: ${{ env.SOURCE_LOCATION }}
+      - name: Publish build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pwa
+          path: ${{ env.SOURCE_LOCATION }}/out
+          if-no-files-found: error
+
+  infrastructure:
+    runs-on: ubuntu-latest
+    name: Deploy Infrastructure
+    needs: build
+    outputs:
+      deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy Infrastructure
+        uses: azure/arm-deploy@v1
+        id: deploy
+        with:
+          scope: subscription
+          subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
+          region: westeurope
+          deploymentName: dep-resourceGroup-${{ github.run_id }}
+          template: ./infrastructure/azure/resourceGroup.bicep
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ github.server_url }}/${{ github.repository }} deploymentId=${{ github.run_id }}'
+          failOnStdErr: false
+
+  deploy:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Deploy Application
+    needs: infrastructure
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: pwa
+      - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: ${{ env.APP_LOCATION }}
-          output_location: ${{ env.APP_OUTPUT_LOCATION }}
-          app_build_command: 'yarn build'
+          app_location: './'
+          output_location: ''
+          skip_app_build: true
+          skip_api_build: true
 
   close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close
+    needs: infrastructure
     steps:
       - name: Close
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
           action: "close"
