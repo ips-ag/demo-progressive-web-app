@@ -29,7 +29,7 @@ permissions:
 
 jobs:
   build:
-    if: env.SHOULD_DEPLOY
+    if: ${{ env.SHOULD_DEPLOY }}
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -74,7 +74,7 @@ jobs:
           failOnStdErr: false
 
   deploy:
-    if: env.SHOULD_DEPLOY
+    if: ${{ env.SHOULD_DEPLOY }}
     runs-on: ubuntu-latest
     name: Deploy Application
     needs: infrastructure
@@ -94,7 +94,7 @@ jobs:
           skip_api_build: true
 
   close:
-    if: env.SHOULD_CLOSE
+    if: ${{ env.SHOULD_CLOSE }}
     runs-on: ubuntu-latest
     name: Close
     needs: infrastructure
