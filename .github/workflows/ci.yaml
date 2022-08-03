@@ -11,7 +11,6 @@ name: Deploy web app to Azure Static Web Apps
 
 env:
   APP_LOCATION: "./src/pwa" # location of your client code
-  APP_OUTPUT_DIRECTORY: 'out' # directory name of client code build output
   APP_OUTPUT_LOCATION: "./src/pwa/out" # location of client code build output
 
 on:
@@ -82,16 +81,16 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: pwa
-          path: ${{ env.APP_OUTPUT_DIRECTORY }}
       - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: ${{ env.APP_OUTPUT_DIRECTORY }}
+          app_location: './'
           output_location: ''
           skip_app_build: true
+          skip_api_build: true
 
   close:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
