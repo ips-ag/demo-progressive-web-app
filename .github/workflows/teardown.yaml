@@ -38,7 +38,7 @@ jobs:
   
   close:
     runs-on: ubuntu-latest
-    name: Close
+    name: Close environment
     needs: infrastructure
     steps:
       - name: Close
