@@ -2,7 +2,7 @@ targetScope = 'subscription'
 
 param name string
 param location string = 'westeurope'
-param repositoryUrl string = ''
+param repositoryUrl string
 param deploymentId string = utcNow()
 param deploy bool = true
 

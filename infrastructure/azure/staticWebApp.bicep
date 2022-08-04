@@ -2,7 +2,7 @@ targetScope = 'resourceGroup'
 
 param name string
 param location string = resourceGroup().location
-param repositoryUrl string = ''
+param repositoryUrl string
 param branch string = 'main'
 param deploy bool = true
 
