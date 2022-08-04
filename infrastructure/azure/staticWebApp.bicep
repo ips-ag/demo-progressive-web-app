@@ -23,7 +23,7 @@ resource swa 'Microsoft.Web/staticSites@2021-03-01' = if (deploy) {
   }
 }
 
-resource swa_existing 'Microsoft.Web/staticSites@2021-03-01' existing = if (deploy) {
+resource swa_existing 'Microsoft.Web/staticSites@2021-03-01' existing = if (!deploy) {
   name: name
 }
 

@@ -1,13 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# GitHub recommends pinning actions to a commit SHA.
-# To get a newer version, you will need to update the SHA.
-# You can also reference a tag or branch, but the action may change without warning.
-
-name: Deploy web app to Azure Static Web Apps
+name: Build and deploy PWA to Azure Static Web Apps
 
 env:
   SOURCE_LOCATION: "./src/pwa" # location of your client code
@@ -17,7 +8,7 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [ opened, synchronize, reopened ]
     branches:
       - main
 
@@ -28,7 +19,6 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -51,12 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Infrastructure
     needs: build
-    if: |
-      always() &&
-      !contains(needs.*.result, 'failure') &&
-      !contains(needs.*.result, 'cancelled')
     env:
-      DEPLOY: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') }}
       REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
     outputs:
       deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
@@ -76,11 +61,10 @@ jobs:
           region: westeurope
           deploymentName: dep-resourceGroup-${{ github.run_id }}
           template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=${{ env.DEPLOY }}'
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=true'
           failOnStdErr: false
 
   deploy:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Deploy Application
     needs: infrastructure
@@ -98,15 +82,3 @@ jobs:
           output_location: ''
           skip_app_build: true
           skip_api_build: true
-
-  close:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close
-    needs: infrastructure
-    steps:
-      - name: Close
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
-          action: "close"

@@ -1,0 +1,48 @@
+name: Teardown feature environment
+
+on:
+  pull_request:
+    types: [ closed ]
+    branches:
+      - main
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  infrastructure:
+    runs-on: ubuntu-latest
+    name: Get deployment token
+    outputs:
+      deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy Infrastructure
+        uses: azure/arm-deploy@v1
+        id: deploy
+        with:
+          scope: subscription
+          subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
+          region: westeurope
+          deploymentName: dep-resourceGroup-${{ github.run_id }}
+          template: ./infrastructure/azure/resourceGroup.bicep
+          parameters: './infrastructure/azure/parameters.json deploymentId=${{ github.run_id }} deploy=false'
+          failOnStdErr: false
+  
+  close:
+    runs-on: ubuntu-latest
+    name: Close
+    needs: infrastructure
+    steps:
+      - name: Close
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
+          action: "close"
