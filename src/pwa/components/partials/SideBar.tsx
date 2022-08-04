@@ -1,20 +1,15 @@
 import * as React from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
+import { List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Button } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import DrawerHeader from './DrawerHeader';
-import { Button } from '@mui/material';
+import CallOutlinedIcon from '@mui/icons-material/CallOutlined';
+import router from 'next/router';
 
 
 const drawerWidth = 240;
@@ -68,7 +63,20 @@ const SideBar = () => {
                 <ListItem disablePadding sx={{ display: 'block' }}>
                     <ListItemButton
                         sx={{
-                            minHeight: 48,
+                            maxHeight: 48,
+                            justifyContent: open ? 'initial' : 'center',
+                            px: 2.5,
+                        }}
+                        onClick={() => router.push('/videoCall')}
+                    >
+                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                            <CallOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Video call'} sx={{ opacity: open ? 1 : 0 }} />
+                    </ListItemButton>
+                    <ListItemButton
+                        sx={{
+                            maxHeight: 48,
                             justifyContent: open ? 'initial' : 'center',
                             px: 2.5,
                         }}
@@ -80,7 +88,7 @@ const SideBar = () => {
                     </ListItemButton>
                     <ListItemButton
                         sx={{
-                            minHeight: 48,
+                            maxHeight: 48,
                             justifyContent: open ? 'initial' : 'center',
                             px: 2.5,
                         }}
@@ -92,7 +100,7 @@ const SideBar = () => {
                     </ListItemButton>
                     <ListItemButton
                         sx={{
-                            minHeight: 48,
+                            maxHeight: 48,
                             justifyContent: open ? 'initial' : 'center',
                             px: 2.5,
                         }}
