@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import validator from 'validator'
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import getDailyProps from '../lib/dailyProps';
 
 
 interface StartCallProps {
@@ -22,6 +23,8 @@ interface RoomInfo {
 }
 
 export default function StartCall({ setRoom }: StartCallProps) {
+    const dailyProps = getDailyProps();
+
     const [isValidUrl, setIsValidUrl] = useState(false);
     const [roomUrl, setRoomUrl] = useState('');
     const [rooms, setRooms] = useState<GetRooms>();
@@ -44,29 +47,34 @@ export default function StartCall({ setRoom }: StartCallProps) {
     }
 
     const fetchRooms = async () => {
-        const resRooms = await fetch('/api/room', {
+        const options = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${dailyProps.apiKey}`,
             },
-        });
-        const resJsonRooms = await resRooms.json() as GetRooms;
+        };
+
+        const roomsRes = await fetch(
+            `${dailyProps.restDomain}/rooms`,
+            options
+        );
+
+        const presenceRes = await fetch(
+            `${dailyProps.restDomain}/presence`,
+            options
+        );
+
+        const roomsJson = await roomsRes.json() as GetRooms;
 
 
+        const presenceJson = await presenceRes.json();
 
-        const resPresence = await fetch('/api/room/presence', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const resJsonPresence = await resPresence.json();
-
-        if (resJsonRooms !== null && resJsonRooms.total_count > 0) {
-            resJsonRooms.data.map((room) => room.totalJoinner = resJsonPresence[room.name] != undefined ? resJsonPresence[room.name].length : 0)
+        if (roomsJson !== null && roomsJson.total_count > 0) {
+            roomsJson.data.map((room) => room.totalJoinner = presenceJson[room.name] != undefined ? presenceJson[room.name].length : 0)
         }
 
-        setRooms(resJsonRooms);
+        setRooms(roomsJson);
     }
 
     useEffect(() => {
