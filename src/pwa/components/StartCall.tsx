@@ -83,14 +83,8 @@ export default function StartCall({ setRoom }: StartCallProps) {
                     <Typography textTransform={'none'}>Create room</Typography>
                 </Button>
             </Grid>
-            <Box>
-                {rooms?.total_count === 0 && (
-                    <Typography>
-                        Looks like there&apos;s no available room for now,
-                        start with creating one!
-                    </Typography>
-                )}
-                <Card>
+            <Box sx={{ display: { md: 'flex' } }}>
+                <Card sx={{ width: { md: '50%', xs: '100%' } }}>
                     <CardContent>
                         <Typography sx={{ fontSize: 20 }} gutterBottom>
                             Available Rooms
@@ -123,8 +117,8 @@ export default function StartCall({ setRoom }: StartCallProps) {
                         ))}
                     </CardContent>
                 </Card>
-                <Divider sx={{ padding: 5 }} />
-                <Card sx={{ minWidth: 275 }}>
+                <Divider sx={{ padding: 2, opacity: 0 }} />
+                <Card sx={{ width: { md: '50%', xs: '100%' } }}>
                     <CardContent>
                         <Typography sx={{ fontSize: 20 }} gutterBottom>
                             You can enter publlic url room to join
