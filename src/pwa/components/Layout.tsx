@@ -16,7 +16,7 @@ const Layout = ({ children }: DashboardLayoutProps) => {
             <Box sx={{ display: { xs: 'none', md: 'flex' } }} >
                 <SideBar />
             </Box>
-            <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: { sx: 0, md: 1 } }}>
                 <DrawerHeader />
                 <main>{children}</main>
             </Box>
