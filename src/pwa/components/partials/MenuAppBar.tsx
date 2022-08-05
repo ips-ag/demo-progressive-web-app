@@ -102,8 +102,8 @@ const MenuAppBar = () => {
                             </Button>
                         </MenuItem>
                         <MenuItem onClick={handleCloseNavMenu}>
-                            <Button onClick={() => router.push('/video')} sx={{ color: 'inherit' }} >
-                                <Typography textTransform={'none'}>Video</Typography>
+                            <Button onClick={() => router.push('/gallery')} sx={{ color: 'inherit' }} >
+                                <Typography textTransform={'none'}>Gallery</Typography>
                             </Button>
                         </MenuItem>
                         <MenuItem onClick={handleCloseNavMenu}>
@@ -156,8 +156,8 @@ const MenuAppBar = () => {
                     <Button onClick={() => router.push('/')} sx={{ my: 2, color: 'inherit', display: 'block' }}>
                         <Typography textTransform={'none'}>Home</Typography>
                     </Button>
-                    <Button onClick={() => router.push('/video')} sx={{ my: 2, color: 'inherit', display: 'block' }}>
-                        <Typography textTransform={'none'}>Video</Typography>
+                    <Button onClick={() => router.push('/gallery')} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+                        <Typography textTransform={'none'}>Gallery</Typography>
                     </Button>
                     <Button onClick={() => router.push('/maps')} sx={{ my: 2, color: 'inherit', display: 'block' }}>
                         <Typography textTransform={'none'}>Maps</Typography>
