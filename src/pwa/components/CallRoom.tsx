@@ -11,8 +11,6 @@ const CALL_OPTIONS = {
 };
 
 const CallRoom = ({ room, setRoom, callFrame, setCallFrame }: any) => {
-
-
   const callRef = useRef(null);
   const createAndJoinCall = useCallback(() => {
     const newCallFrame = DailyIframe.createFrame(

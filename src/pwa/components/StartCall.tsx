@@ -87,8 +87,8 @@ export default function StartCall({ setRoom }: StartCallProps) {
     return (
         <>
             <Grid sx={{ padding: 3 }} container justifyContent="flex-end" >
-                <Button variant="contained" >
-                    <Typography textTransform={'none'}>Create room</Typography>
+                <Button onClick={() => joinAvailableRoom(dailyProps.testRoomUrl)} variant="contained" color='info' >
+                    <Typography textTransform={'none'}>Test call</Typography>
                 </Button>
             </Grid>
             <Box sx={{ display: { md: 'flex' } }}>
