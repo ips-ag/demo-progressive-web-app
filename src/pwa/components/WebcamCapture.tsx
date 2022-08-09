@@ -31,7 +31,6 @@ const WebcamCapture = () => {
     };
 
     const saveImage = () => {
-        console.info(imgSrc)
         if (imgSrc != null) {
             images.push(imgSrc);
             setImages(images);
