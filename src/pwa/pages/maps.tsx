@@ -49,7 +49,7 @@ const Map = () => {
                 </Box>
                 :
                 <Grid sx={{ padding: 3 }} container justifyContent="center" >
-                    <Typography color='error'>Your device is not support GPS or you need to grant permission to access GPS for this page. </Typography>
+                    <Typography color='textPrimary'>Waiting for location services...</Typography>
                 </Grid>
             }
         </>
