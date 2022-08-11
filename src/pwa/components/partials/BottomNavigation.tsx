@@ -15,7 +15,7 @@ const FiexedBottomNavigation = () => {
                     <BottomNavigationAction onClick={() => router.push('/videoCall')} label="Video call" icon={<CallOutlinedIcon />} />
                     <BottomNavigationAction label="Metrics" icon={<BarChartOutlinedIcon />} />
                     <BottomNavigationAction label="Notifications" icon={<NotificationsActiveOutlinedIcon />} />
-                    <BottomNavigationAction label="Settings" icon={<SettingsOutlinedIcon />} />
+                    <BottomNavigationAction onClick={() => router.push('/settings')} label="Settings" icon={<SettingsOutlinedIcon />} />
                 </BottomNavigation>
             </Paper>
         </Box>
