@@ -10,11 +10,8 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, createTheme, Grid, CircularProgress } from '@mui/material';
 import createEmotionCache from '../utility/createEmotionCache';
 import lightThemeOptions from '../styles/theme/lightThemeOptions';
-import Layout from '../components/Layout'
 import { Router } from 'next/router';
-import { useEffect } from 'react';
-
-
+import dynamic from 'next/dynamic';
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -23,11 +20,13 @@ const clientSideEmotionCache = createEmotionCache();
 
 const lightTheme = createTheme(lightThemeOptions);
 
+const Layout = dynamic(() => import('../components/Layout'), {
+  ssr: false
+})
+
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [globalLoading, setGlobalLoading] = React.useState<boolean>(true);
-
 
   Router.events.on('routeChangeStart', (url) => {
     setLoading(true);
@@ -37,60 +36,30 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
     setLoading(false);
   });
 
-  useEffect(() => {
-    setTimeout(() => {
-      setGlobalLoading(false)
-    }, 1000)
-  }, []);
-
   return (
-    <>
-      {globalLoading ?
-        (<Grid
-          container
-          spacing={0}
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          style={{ minHeight: '100vh' }}
-        >
+    <CacheProvider value={emotionCache}>
+      <ThemeProvider theme={lightTheme}>
+        <Layout>
+          {loading ? (
+            <Grid
+              container
+              spacing={0}
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              style={{ minHeight: '100vh' }}
+            >
+              <Grid item xs={3}>
+                <CircularProgress color='info' />
+              </Grid>
+            </Grid>
+          ) : (
+            <Component {...pageProps} />
+          )}
+        </Layout>
 
-          <Grid item xs={3}>
-            <CircularProgress color='info' />
-          </Grid>
-
-        </Grid>)
-        :
-        (
-          <CacheProvider value={emotionCache}>
-            <ThemeProvider theme={lightTheme}>
-
-              <Layout>
-                {loading ? (
-                  <Grid
-                    container
-                    spacing={0}
-                    direction="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    style={{ minHeight: '100vh' }}
-                  >
-                    <Grid item xs={3}>
-                      <CircularProgress color='info' />
-                    </Grid>
-                  </Grid>
-                ) : (
-                  <Component {...pageProps} />
-                )}
-              </Layout>
-
-            </ThemeProvider>
-          </CacheProvider>
-        )
-
-      }
-    </>
-
+      </ThemeProvider>
+    </CacheProvider>
   );
 };
 
