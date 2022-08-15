@@ -36,8 +36,9 @@ yarn-error.log*
 
 # env
 .env
-
 # service worker generated files from public
+public/*.js
+
 public/*.js.map
 
 package-lock.json

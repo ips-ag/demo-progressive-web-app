@@ -10,7 +10,9 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import createEmotionCache from '../utility/createEmotionCache';
 import lightThemeOptions from '../styles/theme/lightThemeOptions';
-import Layout from '../components/Layout'
+import Layout from '../components/Layout';
+import { checkLockAppStatus, verifyWebAuth } from '../services/webAuth';
+import { useEffect } from 'react';
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -21,6 +23,10 @@ const lightTheme = createTheme(lightThemeOptions);
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+
+  useEffect(() => {
+    checkLockAppStatus() && verifyWebAuth();
+  }, []);
 
   return (
     <CacheProvider value={emotionCache}>
