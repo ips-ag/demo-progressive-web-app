@@ -12,6 +12,8 @@ import createEmotionCache from '../utility/createEmotionCache';
 import lightThemeOptions from '../styles/theme/lightThemeOptions';
 import { Router } from 'next/router';
 import dynamic from 'next/dynamic';
+import { checkLockAppStatus, verifyWebAuth } from '../services/webAuth';
+import { useEffect } from 'react';
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -35,6 +37,10 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   Router.events.on('routeChangeComplete', (url) => {
     setLoading(false);
   });
+
+  useEffect(() => {
+    checkLockAppStatus() && verifyWebAuth();
+  }, []);
 
   return (
     <CacheProvider value={emotionCache}>

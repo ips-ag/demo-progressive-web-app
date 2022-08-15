@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import DailyIframe, { DailyCallOptions } from '@daily-co/daily-js';
+import { sendMessage } from '../services/firebase'
 
 const CALL_OPTIONS = {
   showLeaveButton: true,
@@ -33,7 +34,8 @@ const CallRoom = ({ room, setRoom, callFrame, setCallFrame }: any) => {
 
   useEffect(() => {
     if (callFrame) return;
-
+    
+    sendMessage(`Some one join the room: ${room}`, 'videoCall');
     createAndJoinCall();
   }, [callFrame, createAndJoinCall]);
 
