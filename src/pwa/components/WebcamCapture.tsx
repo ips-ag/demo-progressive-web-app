@@ -1,5 +1,5 @@
-import { Box, Button, CardMedia, Chip, DialogActions, DialogContent, Grid, IconButton, Stack, Typography } from "@mui/material";
-import { useRef, useState, useCallback } from "react";
+import { Box, Button, CardMedia, DialogActions, DialogContent, Grid, IconButton, Typography } from "@mui/material";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Webcam from "react-webcam";
 import MuiDialog from "./partials/MuiDialog";
 import MuiDialogTitle from "./partials/MuiDialogTitle";
@@ -8,13 +8,16 @@ import BackspaceOutlinedIcon from '@mui/icons-material/BackspaceOutlined';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import { storageProvider } from '../context/storageProvider';
 import Gallery from "./partials/Gallery";
+import CameraswitchOutlinedIcon from '@mui/icons-material/CameraswitchOutlined';
 
 const WebcamCapture = () => {
+    const [currentDeviceId, setCurrentDeviceId] = useState<string>();
+    const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
     const { images, setImages } = storageProvider();
 
     const webcamRef = useRef<any>(null);
     const [showWebcam, setShowWebcam] = useState(true);
-    const [isSupport, setIsSupport] = useState(true);
+    const [isSupported, setIsSupported] = useState(true);
 
     const [imgSrc, setImgSrc] = useState(null);
     const [open, setOpen] = useState(false);
@@ -40,6 +43,13 @@ const WebcamCapture = () => {
         }
     };
 
+    const switchCamera = () => {
+        let nextIndex = 0;
+        const currentIndex = devices.findIndex(item => item.deviceId === currentDeviceId);
+        if (currentIndex < devices.length - 1)
+            nextIndex = currentIndex + 1;
+        setCurrentDeviceId(devices[nextIndex].deviceId)
+    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -48,14 +58,22 @@ const WebcamCapture = () => {
         setOpen(false);
     };
 
-    const handleDeviceSuppotor = (data: any) => {
-        setIsSupport(false);
+    const handleDeviceError = () => {
+        setIsSupported(false);
     }
 
-    const handleUserMedia = (data: any) => {
-        setIsSupport(true);
+    const handleUserMedia = () => {
+        setIsSupported(true);
     }
-
+    useEffect(() => {
+        navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
+            const supportDevices = mediaDevices.filter(item => item.kind === "videoinput");
+            setDevices(supportDevices);
+            if (supportDevices.length > 0) {
+                setCurrentDeviceId(supportDevices[0].deviceId);
+            }
+        });
+    }, []);
     return (
         <Box>
             <Grid sx={{ padding: 2 }} container justifyContent="flex-end" >
@@ -70,7 +88,7 @@ const WebcamCapture = () => {
                 open={open}
             >
                 <MuiDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Save your momment
+                    Save the moment
                 </MuiDialogTitle>
                 <DialogContent dividers sx={{ textAlign: 'center' }}>
                     {showWebcam &&
@@ -81,8 +99,9 @@ const WebcamCapture = () => {
                             ref={webcamRef}
                             screenshotFormat="image/jpeg"
                             disabled
-                            onUserMediaError={handleDeviceSuppotor}
+                            onUserMediaError={handleDeviceError}
                             onUserMedia={handleUserMedia}
+                            videoConstraints={{ deviceId: currentDeviceId }}
                         />}
                     {imgSrc && (
                         <CardMedia
@@ -92,12 +111,22 @@ const WebcamCapture = () => {
                             image={imgSrc}
                         />
                     )}
-                    {isSupport ?
-                        <Box padding={1}>
+                    {isSupported ?
+                        <Box justifyContent="center" padding={1} sx={{ display: 'flex', '& > *': { m: 1, } }}>
                             {showWebcam ?
-                                <IconButton onClick={capture} color='info' sx={{ border: 'double' }}>
-                                    <PhotoCameraIcon />
-                                </IconButton>
+                                <>
+                                    <Box>
+                                        <IconButton onClick={capture} color='info' sx={{ border: 'double' }}>
+                                            <PhotoCameraIcon />
+                                        </IconButton>
+                                    </Box>
+                                    <Box>
+                                        <IconButton onClick={switchCamera} color='info' sx={{ border: 'double', display: devices.length <= 1 ? 'none' : '' }}>
+                                            <CameraswitchOutlinedIcon />
+                                        </IconButton>
+                                    </Box>
+
+                                </>
                                 :
                                 <IconButton onClick={reCapture} color='error' sx={{ border: 'double' }}>
                                     <BackspaceOutlinedIcon />
@@ -105,8 +134,7 @@ const WebcamCapture = () => {
                             }
                         </Box>
                         :
-                        <Typography color='error'>Your device is not support camera or you need to grant permission to access camera for this page. </Typography>
-
+                        <Typography color='error'>No camera available or no permission to access media devices.</Typography>
                     }
                 </DialogContent>
                 <DialogActions>
@@ -115,10 +143,8 @@ const WebcamCapture = () => {
                     </Button>
                 </DialogActions>
             </MuiDialog>
-
         </Box >
     );
 };
-
 
 export default WebcamCapture;
