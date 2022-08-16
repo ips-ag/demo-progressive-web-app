@@ -25,10 +25,15 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          cache-dependency-path: ${{ env.SOURCE_LOCATION }}/yarn.lock
+      - name: Restore
+      - run: yarn install --frozen-lockfile
+        working-directory: ${{ env.SOURCE_LOCATION }}
       - name: Build
-        run: |
-          yarn
-          yarn build
+        run: yarn build
         working-directory: ${{ env.SOURCE_LOCATION }}
       - name: Publish build artifact
         uses: actions/upload-artifact@v3
