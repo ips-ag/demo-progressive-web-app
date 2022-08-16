@@ -30,7 +30,7 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: ${{ env.SOURCE_LOCATION }}/yarn.lock
       - name: Restore
-      - run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
         working-directory: ${{ env.SOURCE_LOCATION }}
       - name: Build
         run: yarn build
