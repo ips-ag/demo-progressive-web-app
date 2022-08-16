@@ -17,7 +17,7 @@ const WebcamCapture = () => {
 
     const webcamRef = useRef<any>(null);
     const [showWebcam, setShowWebcam] = useState(true);
-    const [isSupport, setIsSupport] = useState(true);
+    const [isSupported, setIsSupported] = useState(true);
 
     const [imgSrc, setImgSrc] = useState(null);
     const [open, setOpen] = useState(false);
@@ -49,8 +49,7 @@ const WebcamCapture = () => {
         if (currentIndex < devices.length - 1)
             nextIndex = currentIndex + 1;
         setCurrentDeviceId(devices[nextIndex].deviceId)
-    }
-
+    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -59,20 +58,20 @@ const WebcamCapture = () => {
         setOpen(false);
     };
 
-    const handleDeviceSuppotor = (data: any) => {
-        setIsSupport(false);
+    const handleDeviceError = () => {
+        setIsSupported(false);
     }
 
-    const handleUserMedia = (data: any) => {
-        setIsSupport(true);
+    const handleUserMedia = () => {
+        setIsSupported(true);
     }
     useEffect(() => {
         navigator.mediaDevices.enumerateDevices().then(mediaDevices => {
             const supportDevices = mediaDevices.filter(item => item.kind === "videoinput");
-
             setDevices(supportDevices);
-
-            setCurrentDeviceId(supportDevices[0].deviceId);
+            if (supportDevices.length > 0) {
+                setCurrentDeviceId(supportDevices[0].deviceId);
+            }
         });
     }, []);
     return (
@@ -89,7 +88,7 @@ const WebcamCapture = () => {
                 open={open}
             >
                 <MuiDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Save your momment
+                    Save the moment
                 </MuiDialogTitle>
                 <DialogContent dividers sx={{ textAlign: 'center' }}>
                     {showWebcam &&
@@ -100,7 +99,7 @@ const WebcamCapture = () => {
                             ref={webcamRef}
                             screenshotFormat="image/jpeg"
                             disabled
-                            onUserMediaError={handleDeviceSuppotor}
+                            onUserMediaError={handleDeviceError}
                             onUserMedia={handleUserMedia}
                             videoConstraints={{ deviceId: currentDeviceId }}
                         />}
@@ -112,7 +111,7 @@ const WebcamCapture = () => {
                             image={imgSrc}
                         />
                     )}
-                    {isSupport ?
+                    {isSupported ?
                         <Box justifyContent="center" padding={1} sx={{ display: 'flex', '& > *': { m: 1, } }}>
                             {showWebcam ?
                                 <>
@@ -135,8 +134,7 @@ const WebcamCapture = () => {
                             }
                         </Box>
                         :
-                        <Typography color='error'>Your device is not support camera or you need to grant permission to access camera for this page. </Typography>
-
+                        <Typography color='error'>No camera available or no permission to access media devices.</Typography>
                     }
                 </DialogContent>
                 <DialogActions>
@@ -148,6 +146,5 @@ const WebcamCapture = () => {
         </Box >
     );
 };
-
 
 export default WebcamCapture;
