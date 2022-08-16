@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getToken, onMessage } from "firebase/messaging";
-import { getMessaging } from "firebase/messaging/sw";
+import { getToken, getMessaging } from "firebase/messaging";
 
 import { getFirestore, collection, addDoc, serverTimestamp, deleteDoc, doc, getDocs, DocumentData, QueryDocumentSnapshot, SnapshotOptions, Firestore } from 'firebase/firestore';
 import firebaseProps from '../lib/firebaseProps'
@@ -9,42 +8,45 @@ const LocalStorageIdFCMToken = "IdFCMToken";
 const fcProps = firebaseProps();
 
 
-const requestPermission = () => {
-    Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-            console.info('Notification permission granted.');
+export const requestPermission = async (): Promise<boolean> => {
+    if (Notification.permission === 'granted') {
+        return initializeFCM()
+    }
+    else {
+        if (Notification.permission !== 'denied') {
+            const permission = await Notification.requestPermission();
+
+            if (permission === 'granted') {
+                return initializeFCM()
+            }
         }
-    })
-}
+        return false
+    }
+};
+
 
 export const checkNotificationStatus = (): boolean => {
     const idFCMTOken = localStorage.getItem(LocalStorageIdFCMToken);
     return idFCMTOken !== undefined && idFCMTOken !== null && idFCMTOken !== ''
 }
 
-export const initializeFCM = async (): Promise<boolean> => {
-    requestPermission();
+const initializeFCM = async (): Promise<boolean> => {
     const app = initializeApp(fcProps.firebaseConfig);
     const messaging = getMessaging(app);
-    let isSuccess = false;
 
-    if (Notification.permission === 'granted') {
-        await getToken(messaging, { vapidKey: FIRE_BASE_KEY }).then(async (currentToken) => {
-            if (currentToken) {
-                await saveNotificationToken(currentToken);
-                isSuccess = true;
-            } else {
-                console.info('No registration token available. Request permission to generate one.');
-            }
-        }).catch((err) => {
-            console.info('An error occurred while retrieving token. ', err);
-        });
+    return await getToken(messaging, { vapidKey: FIRE_BASE_KEY }).then(async (currentToken) => {
+        if (currentToken) {
+            await saveNotificationToken(currentToken);
 
-        onMessage(messaging, (payload) => {
-            console.info('Message received. ', payload);
-        });
-    }
-    return isSuccess;
+            return true;
+        } else {
+            console.info('No registration token available. Request permission to generate one.');
+            return false;
+        }
+    }).catch((err) => {
+        console.info('An error occurred while retrieving token. ', err);
+        return false;
+    });
 }
 const saveNotificationToken = async (token: string) => {
     const app = initializeApp(fcProps.firebaseConfig);
@@ -55,6 +57,7 @@ const saveNotificationToken = async (token: string) => {
             token: token
         });
         localStorage.setItem(LocalStorageIdFCMToken, docRef.id);
+
     } catch (error) {
         console.error("Error adding document: ", error);
     }

@@ -2,7 +2,7 @@ import { Backdrop, CircularProgress, Container, List, ListItem, ListItemIcon, Li
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import PhonelinkLockOutlinedIcon from '@mui/icons-material/PhonelinkLockOutlined';
 import { appProvider } from '../context/appProvider';
-import { initializeFCM, deleteNotificationToken, checkNotificationStatus } from '../services/firebase'
+import { requestPermission, deleteNotificationToken, checkNotificationStatus } from '../services/firebase'
 import { useEffect, useState } from "react";
 import { checkLockAppStatus, registerWebAuth, unLockApp } from '../services/webAuth';
 
@@ -10,12 +10,14 @@ import { checkLockAppStatus, registerWebAuth, unLockApp } from '../services/webA
 const Settings = () => {
     const [isOpenBackdrop, setIsOpenBackdrop] = useState<boolean>(false);
     const [isSupportWebAuth, setIsSupportWebAuth] = useState<boolean>(false);
+    const [isSupportNotification, setIsSupportNotification] = useState<boolean>(false);
+
     const { isEnableNotification, setIsEnableNotification, isEnableLockApp, setIsEnableLockApp } = appProvider();
 
     const onSwitchNotificationStatus = async () => {
         setIsOpenBackdrop(true);
         if (!isEnableNotification) {
-            var isEnable = await initializeFCM();
+            var isEnable = await requestPermission();
             setIsEnableNotification(isEnable)
         } else {
             var isDeleted = await deleteNotificationToken();
@@ -38,6 +40,7 @@ const Settings = () => {
 
     useEffect(() => {
         window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(value => setIsSupportWebAuth(value));
+        'Notification' in window && setIsSupportNotification(true)
         setIsEnableNotification(checkNotificationStatus());
         setIsEnableLockApp(checkLockAppStatus());
     }, []);
@@ -52,18 +55,18 @@ const Settings = () => {
             </Backdrop>
             <List
                 sx={{ width: '100%' }}
-                subheader={<ListSubheader>Settings</ListSubheader>}
-            >
-                <ListItem>
+                subheader={<ListSubheader>Settings</ListSubheader>}>
+                <ListItem disabled={!isSupportNotification}>
                     <ListItemIcon>
                         <NotificationsActiveOutlinedIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Notification" />
+                    <ListItemText primary={isSupportNotification ? "Notification" : "Your device doesn't support Notification."} />
                     <Switch
                         edge="end"
                         color="info"
                         onChange={onSwitchNotificationStatus}
                         checked={isEnableNotification}
+                        disabled={!isSupportNotification}
                     />
                 </ListItem>
                 <ListItem disabled={!isSupportWebAuth}>
