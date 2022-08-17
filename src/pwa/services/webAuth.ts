@@ -1,18 +1,17 @@
-import { registerAuthenticator, getCredentialId, getChallenge, verifyAuthenticator, deletedWebAuth } from './webAuthServer';
-const WEBAUTH_IS_ENABLE = 'WEBAUTH_IS_ENABLE';
+import { registerAuthenticator, getCredentialId, codeChallenge, verifyAuthenticator, deletedWebAuth } from './webAuthServer';
+import { base64ToArrayBuffer, stringToBuffer } from './dataHelper';
 
-const base64ToBuffer = (base64: string) => Uint8Array.from(base64, c => c.charCodeAt(0));
+const WEBAUTH_IS_ENABLE = 'WEBAUTH_IS_ENABLE';
 
 export const verifyWebAuth = async (): Promise<boolean> => {
     const publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptions = {
-        challenge: base64ToBuffer(getChallenge()),
+        challenge: stringToBuffer(codeChallenge),
         userVerification: "required",
         allowCredentials: [{
-            id: base64ToBuffer(getCredentialId()),
+            id: base64ToArrayBuffer(getCredentialId()),
             type: 'public-key',
             transports: ['internal'],
         }],
-        timeout: 60000,
     }
 
     try {
@@ -22,42 +21,43 @@ export const verifyWebAuth = async (): Promise<boolean> => {
 
         return verifyAuthenticator(assertion);
     }
-    catch {
+    catch (error) {
+        console.info(error);
         return false;
     }
 }
 
 export const registerWebAuth = async (): Promise<boolean> => {
     const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
-        challenge: base64ToBuffer(getChallenge()),
+        challenge: stringToBuffer(codeChallenge),
         rp: {
-            name: "IPS-AG WebAuth"
+            name: "IPS-AG WebAuth",
         },
         user: {
-            id: base64ToBuffer("ips-ag-user"),
+            id: stringToBuffer("ips-ag-user"),
             name: "pwa-user",
             displayName: "IPS-PWA",
         },
-        pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+        pubKeyCredParams: [{ alg: -7, type: "public-key" }],
         authenticatorSelection: {
             authenticatorAttachment: "platform",
         },
-
-        timeout: 60000,
-        attestation: "none"
+        attestation: "direct"
     };
 
     try {
-        const credential = await navigator.credentials.create({
+        return await navigator.credentials.create({
             publicKey: publicKeyCredentialCreationOptions
+        }).then(credential => {
+            registerAuthenticator(credential);
+
+            localStorage.setItem(WEBAUTH_IS_ENABLE, 'true');
+
+            return true
         });
-        registerAuthenticator(credential);
-
-        localStorage.setItem(WEBAUTH_IS_ENABLE, 'true');
-
-        return true
     }
-    catch {
+    catch (error) {
+        console.info(error);
         return false;
     }
 }

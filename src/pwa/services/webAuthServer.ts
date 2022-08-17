@@ -1,12 +1,13 @@
 import pkceChallenge from 'pkce-challenge';
+import { arrayBufferToBase64 } from './dataHelper'
+
+export const codeChallenge = pkceChallenge().code_challenge;
 
 const WEBAUTH_CREDENTIAL_ID = "WEBAUTH_CREDENTIAL_ID";
-const WEBAUTH_ID = 'WEBAUTH_ID'
-
-const bufferToBase64 = (buffer: any) => Buffer.from(buffer).toString('base64')
+const WEBAUTH_ID = 'WEBAUTH_ID';
 
 export const registerAuthenticator = (credential: any) => {
-    const credentialId = bufferToBase64(credential.rawId);
+    const credentialId = arrayBufferToBase64(credential.rawId);
 
     localStorage.setItem(WEBAUTH_CREDENTIAL_ID, JSON.stringify({ credentialId }));
     localStorage.setItem(WEBAUTH_ID, credential.id);
@@ -22,9 +23,6 @@ export const getCredentialId = (): string => {
     return credentialId;
 }
 
-export const getChallenge = () => {
-    return pkceChallenge().code_challenge;
-}
 
 export const deletedWebAuth = () => {
     localStorage.removeItem(WEBAUTH_CREDENTIAL_ID);

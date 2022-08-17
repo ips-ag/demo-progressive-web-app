@@ -1,8 +1,14 @@
-import type { NextPage } from 'next'
+import { Box, Grid, Typography } from '@mui/material'
+import type { NextPage } from 'next';
 
 const Index: NextPage = () => {
   return (
-    <h4>Home</h4>
+    <Box>
+      <Grid sx={{ padding: 2 }} container justifyContent="center" >
+        <Typography>Home page</Typography>
+      </Grid>
+
+    </Box >
   )
 }
 

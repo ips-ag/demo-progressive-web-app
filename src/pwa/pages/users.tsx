@@ -1,6 +1,12 @@
+import { Box, Grid, Typography } from "@mui/material"
+
 const User = () => {
     return (
-        <h4>Users</h4>
+        <Box>
+            <Grid sx={{ padding: 2 }} container justifyContent="center" >
+                <Typography>Uers page</Typography>
+            </Grid>
+        </Box >
     )
 }
 
