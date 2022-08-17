@@ -1,6 +1,12 @@
+import { Box, Grid, Typography } from "@mui/material"
+
 const VideoHistory = () => {
     return (
-        <h4>Video history</h4>
+        <Box>
+            <Grid sx={{ padding: 2 }} container justifyContent="center" >
+                <Typography>Video history page</Typography>
+            </Grid>
+        </Box >
     )
 }
 
