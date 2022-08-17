@@ -1,11 +1,9 @@
-import { Grid, TextField, Button, Divider, Chip, Badge, Typography, CardContent, CardActions, Card, Box } from '@mui/material';
+import { Grid, TextField, Button, Divider, Chip, Badge, Typography, CardContent, CardActions, Card, Box, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import validator from 'validator'
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import getDailyProps from '../lib/dailyProps';
-
-
 interface StartCallProps {
     setRoom: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -23,6 +21,8 @@ interface RoomInfo {
 }
 
 export default function StartCall({ setRoom }: StartCallProps) {
+    const [loading, setLoading] = useState<boolean>(true);
+
     const dailyProps = getDailyProps();
 
     const [isValidUrl, setIsValidUrl] = useState(false);
@@ -75,6 +75,8 @@ export default function StartCall({ setRoom }: StartCallProps) {
         }
 
         setRooms(roomsJson);
+
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -82,7 +84,6 @@ export default function StartCall({ setRoom }: StartCallProps) {
         const i = setInterval(fetchRooms, 10000);
         return () => clearInterval(i);
     }, []);
-
 
     return (
         <>
@@ -97,32 +98,49 @@ export default function StartCall({ setRoom }: StartCallProps) {
                         <Typography sx={{ fontSize: 20 }} gutterBottom>
                             Available Rooms
                         </Typography>
-                        {rooms?.data.map(room => (
-                            <div key={room.id}>
-                                <Grid sx={{ padding: 2 }} container spacing={2}>
-                                    <Grid item xs={6}>
-                                        <Typography>{room.name}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        {room.totalJoinner > 0 ? (
-                                            <Badge badgeContent={room.totalJoinner} color="secondary">
-                                                {room.totalJoinner == 1 ? (
-                                                    <PermIdentityOutlinedIcon color="action" />
-                                                ) : (
-                                                    <PeopleAltOutlinedIcon />
-                                                )}
-                                            </Badge>
-                                        ) : (
-                                            <></>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={3} >
-                                        <Chip label="Join" variant="outlined" onClick={() => joinAvailableRoom(room.url)} />
-                                    </Grid>
+                        {loading ? (
+                            <Grid
+                                container
+                                spacing={0}
+                                direction="column"
+                                alignItems="center"
+                                justifyContent="center"
+                                style={{ minHeight: '10vh' }}
+                            >
+                                <Grid item xs={3}>
+                                    <CircularProgress color='info' />
                                 </Grid>
-                                <Divider />
-                            </div>
-                        ))}
+                            </Grid>
+                        ) : (
+                            <>
+                                {rooms?.data.map(room => (
+                                    <div key={room.id}>
+                                        <Grid sx={{ padding: 2 }} container spacing={2}>
+                                            <Grid item xs={6}>
+                                                <Typography>{room.name}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                {room.totalJoinner > 0 ? (
+                                                    <Badge badgeContent={room.totalJoinner} color="secondary">
+                                                        {room.totalJoinner == 1 ? (
+                                                            <PermIdentityOutlinedIcon color="action" />
+                                                        ) : (
+                                                            <PeopleAltOutlinedIcon />
+                                                        )}
+                                                    </Badge>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                            </Grid>
+                                            <Grid item xs={3} >
+                                                <Chip label="Join" variant="outlined" onClick={() => joinAvailableRoom(room.url)} />
+                                            </Grid>
+                                        </Grid>
+                                        <Divider />
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </CardContent>
                 </Card>
                 <Divider sx={{ padding: 2, opacity: 0 }} />
