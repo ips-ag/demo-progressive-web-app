@@ -8,8 +8,6 @@ import { useRouter } from 'next/router';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
-
-
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
@@ -34,7 +32,6 @@ const MenuAppBar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const [anchorElManagement, setAnchorElManagement] = React.useState<null | HTMLElement>(null);
-
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -97,22 +94,24 @@ const MenuAppBar = () => {
                         }}
                     >
                         <MenuItem onClick={handleCloseNavMenu}>
-                            <Button onClick={() => router.push('/')} sx={{ color: 'inherit' }}>
+                            <Button color={router.route === '/' ? 'info' : 'inherit'} onClick={() => router.push('/')}>
                                 <Typography textTransform={'none'}>Home</Typography>
                             </Button>
                         </MenuItem>
                         <MenuItem onClick={handleCloseNavMenu}>
-                            <Button onClick={() => router.push('/gallery')} sx={{ color: 'inherit' }} >
+                            <Button color={router.route === '/gallery' ? 'info' : 'inherit'} onClick={() => router.push('/gallery')} >
                                 <Typography textTransform={'none'}>Gallery</Typography>
                             </Button>
                         </MenuItem>
                         <MenuItem onClick={handleCloseNavMenu}>
-                            <Button onClick={() => router.push('/maps')} sx={{ color: 'inherit' }} >
+                            <Button color={router.route === '/maps' ? 'info' : 'inherit'} onClick={() => router.push('/maps')} >
                                 <Typography textTransform={'none'}>Maps</Typography>
                             </Button>
                         </MenuItem>
                         <MenuItem>
-                            <Button onClick={handleOpenManangementMenu} aria-controls="menu-management" aria-haspopup="true" sx={{ color: 'inherit' }} endIcon={<KeyboardArrowDownIcon color='inherit' />}>
+                            <Button color={router.route === '/videoHistory' || router.route === '/users' ? 'info' : 'inherit'}
+                                onClick={handleOpenManangementMenu} aria-controls="menu-management" aria-haspopup="true"
+                                endIcon={<KeyboardArrowDownIcon color='inherit' />}>
                                 <Typography textTransform={'none'}>Management</Typography>
                             </Button>
                             <Menu
@@ -153,17 +152,18 @@ const MenuAppBar = () => {
                 >
                 </Typography>
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', paddingLeft: 20 } }}>
-                    <Button onClick={() => router.push('/')} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+                    <Button color={router.route === '/' ? 'info' : 'inherit'} onClick={() => router.push('/')} sx={{ my: 2, display: 'block' }}>
                         <Typography textTransform={'none'}>Home</Typography>
                     </Button>
-                    <Button onClick={() => router.push('/gallery')} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+                    <Button color={router.route === '/gallery' ? 'info' : 'inherit'} onClick={() => router.push('/gallery')} sx={{ my: 2, display: 'block' }}>
                         <Typography textTransform={'none'}>Gallery</Typography>
                     </Button>
-                    <Button onClick={() => router.push('/maps')} sx={{ my: 2, color: 'inherit', display: 'block' }}>
+                    <Button color={router.route === '/maps' ? 'info' : 'inherit'} onClick={() => router.push('/maps')} sx={{ my: 2, display: 'block' }}>
                         <Typography textTransform={'none'}>Maps</Typography>
                     </Button>
-                    <Button onClick={handleOpenManangementMenu} aria-controls="menu-management" aria-haspopup="true"
-                        sx={{ color: 'inherit' }} endIcon={<KeyboardArrowDownIcon />}>
+                    <Button color={router.route === '/videoHistory' || router.route === '/users' ? 'info' : 'inherit'}
+                        onClick={handleOpenManangementMenu} aria-controls="menu-management" aria-haspopup="true"
+                        endIcon={<KeyboardArrowDownIcon />}>
                         <Typography textTransform={'none'}>Management</Typography>
                     </Button>
                     <Menu
@@ -185,7 +185,6 @@ const MenuAppBar = () => {
                     >
                         <MenuItem onClick={() => { handleCloseManagementMenu(); router.push('/videoHistory'); }}>
                             <Typography>Video meetings history</Typography>
-
                         </MenuItem>
                         <MenuItem onClick={() => { handleCloseManagementMenu(); router.push('/users'); }}>
                             <Typography >Users</Typography>
@@ -231,7 +230,7 @@ const MenuAppBar = () => {
                     </Menu>
                 </Box>
             </Toolbar>
-        </AppBar>
+        </AppBar >
     );
 };
 export default MenuAppBar;

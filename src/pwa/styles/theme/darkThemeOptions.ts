@@ -17,6 +17,26 @@ const darkThemeOptions: ThemeOptions = {
             secondary: 'rgba(41,38,38,0.54)',
         },
     },
+    components: {
+        MuiBottomNavigationAction: {
+            styleOverrides: {
+                root: {
+                    "&.Mui-selected": {
+                        color: "#0288d1"
+                    }
+                }
+            }
+        },
+        MuiListItemButton: {
+            styleOverrides: {
+                root: {
+                    "&.Mui-selected": {
+                        color: "#0288d1"
+                    }
+                }
+            }
+        }
+    }
 };
 
 export default darkThemeOptions;

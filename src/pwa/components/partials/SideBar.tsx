@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
-import { List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, Button } from '@mui/material';
+import { List, Divider, ListItemButton, ListItemIcon, Button, Typography, ListItemText } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
@@ -59,59 +59,58 @@ const SideBar = () => {
     return (
         <Drawer variant="permanent" open={open}>
             <DrawerHeader />
-            <List>
-                <ListItem disablePadding sx={{ display: 'block' }}>
-                    <ListItemButton
-                        sx={{
-                            maxHeight: 48,
-                            justifyContent: open ? 'initial' : 'center',
-                            px: 2.5,
-                        }}
-                        onClick={() => router.push('/videoCall')}
-                    >
-                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
-                            <CallOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Video call'} sx={{ opacity: open ? 1 : 0 }} />
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            maxHeight: 48,
-                            justifyContent: open ? 'initial' : 'center',
-                            px: 2.5,
-                        }}
-                    >
-                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
-                            <BarChartOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Metrics'} sx={{ opacity: open ? 1 : 0 }} />
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            maxHeight: 48,
-                            justifyContent: open ? 'initial' : 'center',
-                            px: 2.5,
-                        }}
-                    >
-                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
-                            <NotificationsActiveOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Notifications'} sx={{ opacity: open ? 1 : 0 }} />
-                    </ListItemButton>
-                    <ListItemButton
-                        sx={{
-                            maxHeight: 48,
-                            justifyContent: open ? 'initial' : 'center',
-                            px: 2.5,
-                        }}
-                        onClick={() => router.push('/settings')}
-                    >
-                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
-                            <SettingsOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Settings'} sx={{ opacity: open ? 1 : 0 }} />
-                    </ListItemButton>
-                </ListItem>
+            <List component="nav">
+                <ListItemButton
+                    selected={router.route === '/videoCall'}
+                    sx={{
+                        maxHeight: 48,
+                        justifyContent: open ? 'initial' : 'center',
+                        px: 2.5
+                    }}
+                    onClick={() => router.push('/videoCall')}>
+                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                        <CallOutlinedIcon color={router.route === '/videoCall' ? 'info' : 'inherit'} />
+                    </ListItemIcon>
+                    <ListItemText primary={'Video call'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+                <ListItemButton
+                    sx={{
+                        maxHeight: 48,
+                        justifyContent: open ? 'initial' : 'center',
+                        px: 2.5,
+                    }}
+                >
+                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                        <BarChartOutlinedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Metrics'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+                <ListItemButton
+                    sx={{
+                        maxHeight: 48,
+                        justifyContent: open ? 'initial' : 'center',
+                        px: 2.5,
+                    }}
+                >
+                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                        <NotificationsActiveOutlinedIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Notifications'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+                <ListItemButton
+                    selected={router.route === '/settings'}
+                    sx={{
+                        maxHeight: 48,
+                        justifyContent: open ? 'initial' : 'center',
+                        px: 2.5,
+                    }}
+                    onClick={() => router.push('/settings')}
+                >
+                    <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                        <SettingsOutlinedIcon color={router.route === '/settings' ? 'info' : 'inherit'} />
+                    </ListItemIcon>
+                    <ListItemText primary={'Settings'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
             </List>
             <Divider />
             <DrawerHeader>
