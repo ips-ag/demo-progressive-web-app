@@ -17,10 +17,12 @@ export const checkFeatureFlag = (endPoint: string): boolean => {
     }
 }
 
-const featureFlags = {
+export const featureFlags = {
     isEnableCalling: true,
     isEnableCamera: true,
-    isEnableLocationServices: false
+    isEnableLocationServices: true,
+    isEnableNotification: true,
+    isEnableWebAuth: true
 }
 
 const featureEndPoint = {

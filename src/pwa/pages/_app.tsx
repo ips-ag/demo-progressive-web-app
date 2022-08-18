@@ -14,9 +14,11 @@ import darkThemeOptions from '../styles/theme/darkThemeOptions';
 
 import { Router, useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { checkLockAppStatus, verifyWebAuth } from '../services/webAuth';
+import { checkLockAppStatus, verifyWebAuth, unLockApp } from '../services/webAuth';
+import { deleteNotificationToken } from '../services/firebase';
+
 import { useEffect, useMemo, useState } from 'react';
-import { checkFeatureFlag } from '../services/featureFlag'
+import { checkFeatureFlag, featureFlags } from '../services/featureFlag';
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -56,7 +58,8 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
 
 
   useEffect(() => {
-    checkLockAppStatus() && verifyWebAuth();
+    featureFlags.isEnableWebAuth ? checkLockAppStatus() && verifyWebAuth() : unLockApp();
+    !featureFlags.isEnableNotification && deleteNotificationToken();
   }, []);
 
   return (
