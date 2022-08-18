@@ -10,10 +10,11 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, createTheme, Grid, CircularProgress } from '@mui/material';
 import createEmotionCache from '../utility/createEmotionCache';
 import lightThemeOptions from '../styles/theme/lightThemeOptions';
-import { Router } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { checkLockAppStatus, verifyWebAuth } from '../services/webAuth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { checkFeatureFlag } from '../services/featureFlag'
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -28,7 +29,8 @@ const Layout = dynamic(() => import('../components/Layout'), {
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   Router.events.on('routeChangeStart', (url) => {
     setLoading(true);
@@ -37,6 +39,14 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   Router.events.on('routeChangeComplete', (url) => {
     setLoading(false);
   });
+
+  useEffect(() => {
+    const result = checkFeatureFlag(router.route);
+
+    if (!result)
+      router.push("/disableFeature");
+  }, [router.route]);
+
 
   useEffect(() => {
     checkLockAppStatus() && verifyWebAuth();

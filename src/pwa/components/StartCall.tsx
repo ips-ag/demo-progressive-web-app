@@ -120,7 +120,7 @@ export default function StartCall({ setRoom }: StartCallProps) {
                                                 <Typography>{room.name}</Typography>
                                             </Grid>
                                             <Grid item xs={3}>
-                                                {room.totalJoinner > 0 ? (
+                                                {room.totalJoinner > 0 &&
                                                     <Badge badgeContent={room.totalJoinner} color="secondary">
                                                         {room.totalJoinner == 1 ? (
                                                             <PermIdentityOutlinedIcon color="action" />
@@ -128,9 +128,7 @@ export default function StartCall({ setRoom }: StartCallProps) {
                                                             <PeopleAltOutlinedIcon />
                                                         )}
                                                     </Badge>
-                                                ) : (
-                                                    <></>
-                                                )}
+                                                }
                                             </Grid>
                                             <Grid item xs={3} >
                                                 <Chip label="Join" variant="outlined" onClick={() => joinAvailableRoom(room.url)} />
