@@ -1,17 +1,17 @@
-import { Backdrop, CircularProgress, Container, List, ListItem, ListItemIcon, ListItemText, ListSubheader, Switch } from "@mui/material"
+import { Backdrop, CircularProgress, Container, List, ListItem, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import PhonelinkLockOutlinedIcon from '@mui/icons-material/PhonelinkLockOutlined';
 import { appProvider } from '../context/appProvider';
 import { requestPermission, deleteNotificationToken, checkNotificationStatus } from '../services/firebase'
 import { useEffect, useState } from "react";
 import { checkLockAppStatus, registerWebAuth, unLockApp } from '../services/webAuth';
+import { featureFlags } from '../services/featureFlag';
 
 
 const Settings = () => {
     const [isOpenBackdrop, setIsOpenBackdrop] = useState<boolean>(false);
     const [isSupportWebAuth, setIsSupportWebAuth] = useState<boolean>(false);
     const [isSupportNotification, setIsSupportNotification] = useState<boolean>(false);
-
     const { isEnableNotification, setIsEnableNotification, isEnableLockApp, setIsEnableLockApp } = appProvider();
 
     const onSwitchNotificationStatus = async () => {
@@ -39,10 +39,14 @@ const Settings = () => {
     }
 
     useEffect(() => {
-        window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(value => setIsSupportWebAuth(value));
-        'Notification' in window && setIsSupportNotification(true)
-        setIsEnableNotification(checkNotificationStatus());
-        setIsEnableLockApp(checkLockAppStatus());
+        if (featureFlags.isEnableWebAuth) {
+            window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(value => setIsSupportWebAuth(value));
+            setIsEnableLockApp(checkLockAppStatus());
+        }
+        if (featureFlags.isEnableNotification) {
+            'Notification' in window && setIsSupportNotification(true)
+            setIsEnableNotification(checkNotificationStatus());
+        }
     }, []);
     return (
         <Container>
@@ -53,35 +57,38 @@ const Settings = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <List
-                sx={{ width: '100%' }}
-                subheader={<ListSubheader>Settings</ListSubheader>}>
-                <ListItem disabled={!isSupportNotification}>
-                    <ListItemIcon>
-                        <NotificationsActiveOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={isSupportNotification ? "Notification" : "Your device doesn't support Notification."} />
-                    <Switch
-                        edge="end"
-                        color="info"
-                        onChange={onSwitchNotificationStatus}
-                        checked={isEnableNotification}
-                        disabled={!isSupportNotification}
-                    />
-                </ListItem>
-                <ListItem disabled={!isSupportWebAuth}>
-                    <ListItemIcon>
-                        <PhonelinkLockOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={isSupportWebAuth ? "Lock app" : "Your device doesn't support Webauth."} />
-                    <Switch
-                        edge="end"
-                        color="info"
-                        onChange={onSwitchLockAppStatus}
-                        checked={isEnableLockApp}
-                        disabled={!isSupportWebAuth}
-                    />
-                </ListItem>
+            <List sx={{ width: '100%' }}>
+                <Typography>Settings</Typography>
+                {featureFlags.isEnableNotification &&
+                    <ListItem disabled={!isSupportNotification}>
+                        <ListItemIcon>
+                            <NotificationsActiveOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={isSupportNotification ? "Notification" : "Your device doesn't support Notification."} />
+                        <Switch
+                            edge="end"
+                            color="info"
+                            onChange={onSwitchNotificationStatus}
+                            checked={isEnableNotification}
+                            disabled={!isSupportNotification}
+                        />
+                    </ListItem>
+                }
+                {featureFlags.isEnableWebAuth &&
+                    <ListItem disabled={!isSupportWebAuth}>
+                        <ListItemIcon>
+                            <PhonelinkLockOutlinedIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={isSupportWebAuth ? "Lock app" : "Your device doesn't support Webauth."} />
+                        <Switch
+                            edge="end"
+                            color="info"
+                            onChange={onSwitchLockAppStatus}
+                            checked={isEnableLockApp}
+                            disabled={!isSupportWebAuth}
+                        />
+                    </ListItem>
+                }
             </List>
         </Container>
     )

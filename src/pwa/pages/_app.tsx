@@ -7,20 +7,23 @@ import '@fontsource/roboto/700.css';
 import * as React from 'react';
 import type { AppProps } from 'next/app';
 import { CacheProvider, EmotionCache } from '@emotion/react';
-import { ThemeProvider, createTheme, Grid, CircularProgress } from '@mui/material';
+import { ThemeProvider, createTheme, Grid, CircularProgress, useMediaQuery } from '@mui/material';
 import createEmotionCache from '../utility/createEmotionCache';
 import lightThemeOptions from '../styles/theme/lightThemeOptions';
-import { Router } from 'next/router';
+import darkThemeOptions from '../styles/theme/darkThemeOptions';
+
+import { Router, useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-import { checkLockAppStatus, verifyWebAuth } from '../services/webAuth';
-import { useEffect } from 'react';
+import { checkLockAppStatus, verifyWebAuth, unLockApp } from '../services/webAuth';
+import { deleteNotificationToken } from '../services/firebase';
+
+import { useEffect, useMemo, useState } from 'react';
+import { checkFeatureFlag, featureFlags } from '../services/featureFlag';
 
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache;
 }
 const clientSideEmotionCache = createEmotionCache();
-
-const lightTheme = createTheme(lightThemeOptions);
 
 const Layout = dynamic(() => import('../components/Layout'), {
   ssr: false
@@ -28,7 +31,15 @@ const Layout = dynamic(() => import('../components/Layout'), {
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const theme = useMemo(
+    () =>
+      createTheme(prefersDarkMode ? darkThemeOptions : lightThemeOptions),
+    [prefersDarkMode],
+  );
 
   Router.events.on('routeChangeStart', (url) => {
     setLoading(true);
@@ -39,12 +50,21 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
   });
 
   useEffect(() => {
-    checkLockAppStatus() && verifyWebAuth();
+    const result = checkFeatureFlag(router.route);
+
+    if (!result)
+      router.push("/disableFeature");
+  }, [router.route]);
+
+
+  useEffect(() => {
+    featureFlags.isEnableWebAuth ? checkLockAppStatus() && verifyWebAuth() : unLockApp();
+    !featureFlags.isEnableNotification && deleteNotificationToken();
   }, []);
 
   return (
     <CacheProvider value={emotionCache}>
-      <ThemeProvider theme={lightTheme}>
+      <ThemeProvider theme={theme}>
         <Layout>
           {loading ? (
             <Grid

@@ -1,8 +1,8 @@
 import { ThemeOptions } from '@mui/material/styles';
 
-const lightThemeOptions: ThemeOptions = {
+const darkThemeOptions: ThemeOptions = {
     palette: {
-        mode: 'light',
+        mode: 'dark',
         primary: {
             main: '#fbfbfb',
             contrastText: 'rgba(37,28,28,0.87)',
@@ -39,4 +39,4 @@ const lightThemeOptions: ThemeOptions = {
     }
 };
 
-export default lightThemeOptions;
+export default darkThemeOptions;
