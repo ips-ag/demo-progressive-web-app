@@ -1,4 +1,4 @@
-import { Backdrop, CircularProgress, Container, List, ListItem, ListItemIcon, ListItemText, ListSubheader, Switch } from "@mui/material"
+import { Backdrop, CircularProgress, Container, List, ListItem, ListItemIcon, ListItemText, Switch, Typography } from "@mui/material"
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import PhonelinkLockOutlinedIcon from '@mui/icons-material/PhonelinkLockOutlined';
 import { appProvider } from '../context/appProvider';
@@ -53,9 +53,8 @@ const Settings = () => {
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
-            <List
-                sx={{ width: '100%' }}
-                subheader={<ListSubheader>Settings</ListSubheader>}>
+            <List sx={{ width: '100%' }}>
+                <Typography>Settings</Typography>
                 <ListItem disabled={!isSupportNotification}>
                     <ListItemIcon>
                         <NotificationsActiveOutlinedIcon />

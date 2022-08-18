@@ -112,7 +112,7 @@ const MenuAppBar = () => {
                             </Button>
                         </MenuItem>
                         <MenuItem>
-                            <Button onClick={handleOpenManangementMenu} aria-controls="menu-management" aria-haspopup="true" sx={{ color: 'inherit' }} endIcon={<KeyboardArrowDownIcon color='warning' />}>
+                            <Button onClick={handleOpenManangementMenu} aria-controls="menu-management" aria-haspopup="true" sx={{ color: 'inherit' }} endIcon={<KeyboardArrowDownIcon color='inherit' />}>
                                 <Typography textTransform={'none'}>Management</Typography>
                             </Button>
                             <Menu
