@@ -73,8 +73,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Application
     needs: infrastructure
-    env:
-      
     steps:
       - uses: actions/download-artifact@v3
         with:
