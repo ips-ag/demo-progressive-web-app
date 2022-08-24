@@ -2,6 +2,7 @@ name: Build and deploy PWA to Azure Static Web Apps
 
 env:
   SOURCE_LOCATION: "./src/pwa" # location of your client code
+  WEB_APP_NAME: "stapp-pwademo" # name of static web app resource to deploy
 
 on:
   push:
@@ -48,8 +49,6 @@ jobs:
     needs: build
     env:
       REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
-    outputs:
-      deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -66,7 +65,7 @@ jobs:
           region: westeurope
           deploymentName: dep-resourceGroup-${{ github.run_id }}
           template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=true'
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} webAppName=${{ env.WEB_APP_NAME }}'
           failOnStdErr: false
 
   deploy:
@@ -77,10 +76,20 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: pwa
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Get SWA deployment token
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ env.WEB_APP_NAME }} -o tsv --query properties.apiKey)
+            echo "::add-mask::$SWA_DEPLOYMENT_TOKEN"
+            echo SWA_DEPLOYMENT_TOKEN=$SWA_DEPLOYMENT_TOKEN >> $GITHUB_ENV
       - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
+          azure_static_web_apps_api_token: ${{ env.SWA_DEPLOYMENT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: './'

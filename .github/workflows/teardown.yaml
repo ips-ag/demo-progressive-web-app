@@ -1,5 +1,8 @@
 name: Teardown feature environment
 
+env:  
+  WEB_APP_NAME: "stapp-pwademo" # name of static web app resource to use
+
 on:
   pull_request:
     types: [ closed ]
@@ -11,40 +14,23 @@ permissions:
   contents: read
   pull-requests: write
 
-jobs:
-  infrastructure:
-    runs-on: ubuntu-latest
-    name: Get deployment token
-    env:
-      REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
-    outputs:
-      deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Deploy Infrastructure
-        uses: azure/arm-deploy@v1
-        id: deploy
-        with:
-          scope: subscription
-          subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
-          region: westeurope
-          deploymentName: dep-resourceGroup-${{ github.run_id }}
-          template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=false'
-          failOnStdErr: false
-  
+jobs:  
   close:
     runs-on: ubuntu-latest
     name: Close environment
-    needs: infrastructure
     steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Get SWA deployment token
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ env.WEB_APP_NAME }} -o tsv --query properties.apiKey)
+            echo "::add-mask::$SWA_DEPLOYMENT_TOKEN"
+            echo SWA_DEPLOYMENT_TOKEN=$SWA_DEPLOYMENT_TOKEN >> $GITHUB_ENV
       - name: Close
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
+          azure_static_web_apps_api_token: ${{ env.SWA_DEPLOYMENT_TOKEN }}
           action: "close"
