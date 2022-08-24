@@ -68,6 +68,9 @@ jobs:
           template: ./infrastructure/azure/resourceGroup.bicep
           parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=true'
           failOnStdErr: false
+      - name: Hide deployment token
+        run: |
+          echo "::add-mask::${{ steps.deploy.outputs.deploymentToken }}
 
   deploy:
     runs-on: ubuntu-latest
