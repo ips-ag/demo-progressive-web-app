@@ -80,7 +80,7 @@ jobs:
         with:
           name: pwa
       - name: Hide deployment token
-        run: echo "::add-mask::${{ env.DEPLOYMENT_TOKEN }}"
+        run: echo "::add-mask::$DEPLOYMENT_TOKEN"
       - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
