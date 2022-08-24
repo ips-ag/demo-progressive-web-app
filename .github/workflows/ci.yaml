@@ -49,7 +49,7 @@ jobs:
     env:
       REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
     outputs:
-      deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
+      webAppName: ${{ steps.deploy.outputs.webAppName }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -74,17 +74,25 @@ jobs:
     name: Deploy Application
     needs: infrastructure
     env:
-      DEPLOYMENT_TOKEN: ${{ needs.infrastructure.outputs.deploymentToken }}
+      
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: pwa
-      - name: Hide deployment token
-        run: echo "::add-mask::$DEPLOYMENT_TOKEN"
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Get SWA deployment token
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ needs.infrastructure.outputs.webAppName }} -o tsv --query properties.apiKey)
+            echo "::add-mask::$SWA_DEPLOYMENT_TOKEN"
+            echo SWA_DEPLOYMENT_TOKEN=$SWA_DEPLOYMENT_TOKEN >> $GITHUB_ENV
       - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ env.DEPLOYMENT_TOKEN }}
+          azure_static_web_apps_api_token: ${{ env.SWA_DEPLOYMENT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: './'

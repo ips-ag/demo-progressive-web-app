@@ -18,7 +18,7 @@ jobs:
     env:
       REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
     outputs:
-      deploymentToken: ${{ steps.deploy.outputs.deploymentToken }}
+      webAppName: ${{ steps.deploy.outputs.webAppName }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -43,8 +43,18 @@ jobs:
     name: Close environment
     needs: infrastructure
     steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Get SWA deployment token
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ needs.infrastructure.outputs.webAppName }} -o tsv --query properties.apiKey)
+            echo "::add-mask::$SWA_DEPLOYMENT_TOKEN"
+            echo SWA_DEPLOYMENT_TOKEN=$SWA_DEPLOYMENT_TOKEN >> $GITHUB_ENV
       - name: Close
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
+          azure_static_web_apps_api_token: ${{ env.SWA_DEPLOYMENT_TOKEN }}
           action: "close"

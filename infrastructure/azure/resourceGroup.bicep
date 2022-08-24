@@ -33,4 +33,4 @@ module app_existing 'staticWebApp.bicep' = if (!deploy) {
   }
 }
 
-output deploymentToken string = deploy ? app.outputs.deploymentToken : app_existing.outputs.deploymentToken
+output webAppName string = webAppName

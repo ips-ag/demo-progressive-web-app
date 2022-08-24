@@ -26,6 +26,3 @@ resource swa 'Microsoft.Web/staticSites@2021-03-01' = if (deploy) {
 resource swa_existing 'Microsoft.Web/staticSites@2021-03-01' existing = if (!deploy) {
   name: name
 }
-
-#disable-next-line outputs-should-not-contain-secrets
-output deploymentToken string = listSecrets(deploy ? swa.id : swa_existing.id, '2021-03-01').properties.apiKey
