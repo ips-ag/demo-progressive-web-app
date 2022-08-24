@@ -70,7 +70,7 @@ jobs:
           failOnStdErr: false
       - name: Hide deployment token
         run: |
-          echo "::add-mask::${{ steps.deploy.outputs.deploymentToken }}
+          echo "::add-mask::${{ steps.deploy.outputs.deploymentToken }}"
 
   deploy:
     runs-on: ubuntu-latest
