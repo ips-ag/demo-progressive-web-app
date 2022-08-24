@@ -1,5 +1,8 @@
 name: Teardown feature environment
 
+env:  
+  WEB_APP_NAME: "stapp-pwademo" # name of static web app resource to use
+
 on:
   pull_request:
     types: [ closed ]
@@ -11,33 +14,7 @@ permissions:
   contents: read
   pull-requests: write
 
-jobs:
-  infrastructure:
-    runs-on: ubuntu-latest
-    name: Get deployment token
-    env:
-      REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
-    outputs:
-      webAppName: ${{ steps.deploy.outputs.webAppName }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Deploy Infrastructure
-        uses: azure/arm-deploy@v1
-        id: deploy
-        with:
-          scope: subscription
-          subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
-          region: westeurope
-          deploymentName: dep-resourceGroup-${{ github.run_id }}
-          template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=false'
-          failOnStdErr: false
-  
+jobs:  
   close:
     runs-on: ubuntu-latest
     name: Close environment

@@ -2,6 +2,7 @@ name: Build and deploy PWA to Azure Static Web Apps
 
 env:
   SOURCE_LOCATION: "./src/pwa" # location of your client code
+  WEB_APP_NAME: "stapp-pwademo" # name of static web app resource to deploy
 
 on:
   push:
@@ -66,7 +67,7 @@ jobs:
           region: westeurope
           deploymentName: dep-resourceGroup-${{ github.run_id }}
           template: ./infrastructure/azure/resourceGroup.bicep
-          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} deploy=true'
+          parameters: './infrastructure/azure/parameters.json repositoryUrl=${{ env.REPOSITORY_URL }} deploymentId=${{ github.run_id }} webAppName=${{ env.WEB_APP_NAME }}'
           failOnStdErr: false
 
   deploy:

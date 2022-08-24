@@ -4,9 +4,8 @@ param name string
 param location string = resourceGroup().location
 param repositoryUrl string
 param branch string = 'main'
-param deploy bool = true
 
-resource swa 'Microsoft.Web/staticSites@2021-03-01' = if (deploy) {
+resource swa 'Microsoft.Web/staticSites@2021-03-01' = {
   name: name
   location: location
   sku: {
@@ -23,6 +22,3 @@ resource swa 'Microsoft.Web/staticSites@2021-03-01' = if (deploy) {
   }
 }
 
-resource swa_existing 'Microsoft.Web/staticSites@2021-03-01' existing = if (!deploy) {
-  name: name
-}
