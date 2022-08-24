@@ -73,16 +73,18 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Application
     needs: infrastructure
+    env:
+      DEPLOYMENT_TOKEN: ${{ needs.infrastructure.outputs.deploymentToken }}
     steps:
       - uses: actions/download-artifact@v3
         with:
           name: pwa
       - name: Hide deployment token
-        run: echo "::add-mask::${{ needs.infrastructure.outputs.deploymentToken }}"
+        run: echo "::add-mask::${{ env.DEPLOYMENT_TOKEN }}"
       - name: Deploy Application
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ needs.infrastructure.outputs.deploymentToken }}
+          azure_static_web_apps_api_token: ${{ env.DEPLOYMENT_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: './'
