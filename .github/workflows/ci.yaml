@@ -49,8 +49,6 @@ jobs:
     needs: build
     env:
       REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
-    outputs:
-      webAppName: ${{ steps.deploy.outputs.webAppName }}
     steps:
       - uses: actions/checkout@v3
         with:

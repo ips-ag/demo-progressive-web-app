@@ -18,7 +18,6 @@ jobs:
   close:
     runs-on: ubuntu-latest
     name: Close environment
-    needs: infrastructure
     steps:
       - uses: azure/login@v1
         with:
