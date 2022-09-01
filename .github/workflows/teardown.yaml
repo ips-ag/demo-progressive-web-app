@@ -1,6 +1,7 @@
 name: Teardown feature environment
 
-env:  
+env:
+  RESOURCE_GROUP_NAME: "rg-ipspwademo" # resource group where static web app is deployed
   WEB_APP_NAME: "stapp-pwademo" # name of static web app resource to use
 
 on:
@@ -26,7 +27,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ env.WEB_APP_NAME }} -o tsv --query properties.apiKey)
+            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ env.WEB_APP_NAME }} -g ${{ env.RESOURCE_GROUP_NAME }} -o tsv --query properties.apiKey)
             echo "::add-mask::$SWA_DEPLOYMENT_TOKEN"
             echo SWA_DEPLOYMENT_TOKEN=$SWA_DEPLOYMENT_TOKEN >> $GITHUB_ENV
       - name: Close

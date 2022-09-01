@@ -2,6 +2,7 @@ name: Build and deploy PWA to Azure Static Web Apps
 
 env:
   SOURCE_LOCATION: "./src/pwa" # location of your client code
+  RESOURCE_GROUP_NAME: "rg-ipspwademo" # resource group to deploy infrastructure
   WEB_APP_NAME: "stapp-pwademo" # name of static web app resource to deploy
 
 on:
@@ -82,7 +83,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ env.WEB_APP_NAME }} -o tsv --query properties.apiKey)
+            SWA_DEPLOYMENT_TOKEN=$(az staticwebapp secrets list -n ${{ env.WEB_APP_NAME }} -g ${{ env.RESOURCE_GROUP_NAME }} -o tsv --query properties.apiKey)
             echo "::add-mask::$SWA_DEPLOYMENT_TOKEN"
             echo SWA_DEPLOYMENT_TOKEN=$SWA_DEPLOYMENT_TOKEN >> $GITHUB_ENV
       - name: Deploy Application
